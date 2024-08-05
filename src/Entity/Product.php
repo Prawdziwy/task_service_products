@@ -38,6 +38,6 @@ class Product implements \App\Service\Catalog\Product
 
     public function getPrice(): int
     {
-        return $this->priceAmount;
+        return (int)$this->priceAmount;
     }
 }
