@@ -24,20 +24,21 @@ class AddProductController extends AbstractController implements MessageBusAware
 
     public function __invoke(Cart $cart, Product $product): Response
     {
-        if ($cart->isFull()) {
+        try {
+            if ($cart->isFull()) {
+                throw new \Exception('Cart is full.');
+            } elseif ($cart->isMaximumQuantityOfProduct($product)) {
+                throw new \Exception('You have maximum amount of this product in this cart.');
+            }
+
+            $this->dispatch(new AddProductToCart($cart->getId(), $product->getId()));
+
+            return new Response('', Response::HTTP_ACCEPTED);
+        } catch (\Exception $e) {
             return new JsonResponse(
-                $this->errorBuilder->__invoke('Cart is full.'),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        } elseif ($cart->isMaximumQuantityOfProduct($product)) {
-            return new JsonResponse(
-                $this->errorBuilder->__invoke('You have maximum amount of this product in this cart.'),
+                $this->errorBuilder->__invoke($e->getMessage()),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
-
-        $this->dispatch(new AddProductToCart($cart->getId(), $product->getId()));
-
-        return new Response('', Response::HTTP_ACCEPTED);
     }
 }
