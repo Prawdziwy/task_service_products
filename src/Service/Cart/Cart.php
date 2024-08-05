@@ -10,7 +10,7 @@ interface Cart
     public function getTotalPrice(): int;
     public function isFull(): bool;
     /**
-     * @return Product[]
+     * @return \App\Entity\CartProduct[]
      */
     public function getProducts(): iterable;
 }
