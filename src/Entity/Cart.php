@@ -78,6 +78,10 @@ class Cart implements \App\Service\Cart\Cart
 
     public function addProduct(\App\Entity\Product $product): void
     {
+        if ($this->isFull()) {
+            return;
+        }
+
         $cartProduct = $this->getProduct($product);
 
         if ($cartProduct) {
